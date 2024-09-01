@@ -1,0 +1,85 @@
+#define led_a 13
+#define led_r 12
+#define led_v 11
+
+bool estado_verde = LOW;
+bool estado_rojo = LOW;
+bool estado_amarillo = LOW;
+bool todas_las_luces_encendidas = false;
+
+void setup() {
+  pinMode(led_a, OUTPUT);
+  pinMode(led_r, OUTPUT);
+  pinMode(led_v, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char comando = Serial.read();
+    Serial.print("Comando recibido: ");
+    Serial.println(comando);
+
+    switch (comando) {
+      case '1':
+      case '2':
+        estado_verde = !estado_verde;
+        Serial.print("Estado verde: ");
+        Serial.println(estado_verde);
+        controlarLuz(led_v, estado_verde);
+        break;
+      case '3':
+      case '4':
+        estado_rojo = !estado_rojo;
+        Serial.print("Estado rojo: ");
+        Serial.println(estado_rojo);
+        controlarLuz(led_r, estado_rojo);
+        break;
+      case '5':
+      case '6':
+        estado_amarillo = !estado_amarillo;
+        Serial.print("Estado amarillo: ");
+        Serial.println(estado_amarillo);
+        controlarLuz(led_a, estado_amarillo);
+        break;
+      case '7':
+        todas_las_luces_encendidas = !todas_las_luces_encendidas;
+        Serial.print("Todas las luces encendidas: ");
+        Serial.println(todas_las_luces_encendidas);
+        controlarTodasLasLuces(todas_las_luces_encendidas);
+        break;
+      case '8':
+        todas_las_luces_encendidas = !todas_las_luces_encendidas;
+        Serial.print("Todas las luces encendidas: ");
+        Serial.println(todas_las_luces_encendidas);
+        controlarTodasLasLuces(todas_las_luces_encendidas);
+        break;
+      case '9':
+        Serial.println("Modo intermitente");
+        modoIntermitente();
+        break;
+      default:
+        Serial.println("Comando no válido.");
+        break;
+    }
+  }
+}
+
+void controlarLuz(int pin, int estado) {
+  digitalWrite(pin, estado);
+}
+
+void controlarTodasLasLuces(bool estado) {
+  digitalWrite(led_a, estado);
+  digitalWrite(led_r, estado);
+  digitalWrite(led_v, estado);
+}
+
+void modoIntermitente() {
+  for (int i = 0; i < 5; i++) {
+    controlarTodasLasLuces(HIGH);
+    delay(500);
+    controlarTodasLasLuces(LOW);
+    delay(500);
+  }
+}
